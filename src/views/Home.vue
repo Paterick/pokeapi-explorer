@@ -3,9 +3,7 @@
     <p>{{title}}</p>
     <input type="text" placeholder="Enter name of pokeman to search" v-model="name" ><button @click="onFetchPokemon">Fetch pokemon</button>
   </div>
-  <div v-if="foundPokemon">
-    <PokemonCard :pokemon ="foundPokemon" />
-  </div>
+  <PokemonCard :pokemon ="foundPokemon" v-if="foundPokemon" />
 </template>
 
 <script lang="ts">
