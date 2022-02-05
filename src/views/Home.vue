@@ -4,24 +4,18 @@
     <input type="text" placeholder="Enter name of pokeman to search" v-model="name" ><button @click="onFetchPokemon">Fetch pokemon</button>
   </div>
   <div v-if="foundPokemon">
-    <div class="pokemon-detail">
-      <div class="thumbnail"><img src="foundPokemon.sprites.frontdefault" alt=""></div>
-      <div class="info">
-        <h3>{{foundPokemon.name}}</h3>
-        <p>Height: {{foundPokemon.height}} Weight: {{foundPokemon.weight}}</p>
-        <div class="move" v-for="move in foundPokemon.moves" :key="move.name">{{move.name}}</div>
-      </div>
-    </div>
+    <PokemonCard :pokemon ="foundPokemon" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { PokemonClient, Pokemon  } from 'pokenode-ts';
+import PokemonCard from '@/components/PokemonCard.vue';
 
 export default defineComponent({
   name: 'Home',
-  components: {},
+  components: { PokemonCard },
   setup() {
     const title = ref('Welcome to pokeapi explorer');
     const name = ref('');
@@ -31,9 +25,10 @@ export default defineComponent({
       const api = new PokemonClient();
 
       await api
-      .getPokemonByName(name.value)
+      .getPokemonByName(name.value.toLowerCase())
       .then((data: Pokemon) => {
         foundPokemon.value = data;
+        console.log(data);
       })
       .catch((error) => console.error(error));
 
