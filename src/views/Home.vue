@@ -3,8 +3,9 @@
     <h2>{{title}}</h2>
     <form @submit.prevent="onFetchPokemon" class="search-form">
       <input class="pokemon-name" type="text" placeholder="Enter the name of pokeman to search for" v-model="name" >
-      <button>Fetch pokemon</button>
-      <div class="error" v-if="notfound">{{notfound}}</div>
+      <button v-if="!isPending">Search</button>
+      <button v-else>Searching...</button>
+      <div class="error" v-if="error">{{error}}</div>
     </form>
 
   </div>
@@ -13,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { PokemonClient, Pokemon  } from 'pokenode-ts';
+import usePokemonApi from '@/composables/usePokemonApi.ts';
 import PokemonCard from '@/components/PokemonCard.vue';
 
 export default defineComponent({
@@ -22,24 +23,13 @@ export default defineComponent({
   setup() {
     const title = ref('Welcome to pokeapi explorer');
     const name = ref('');
-    const notfound = ref();
-    const foundPokemon = ref<Pokemon>()
+    const { foundPokemon, error, isPending, searchPokemonApi } = usePokemonApi();
 
     const onFetchPokemon = async() => {
-      notfound.value = '';
-      const api = new PokemonClient();
-
-      await api
-      .getPokemonByName(name.value.toLowerCase())
-      .then((data: Pokemon) => {
-        foundPokemon.value = data;
-      })
-      .catch(() => {
-        notfound.value = `Could not find a pokemon with the name ${name.value}`
-      });
+      await searchPokemonApi(name.value);
     }
 
-    return { title, onFetchPokemon, name, foundPokemon, notfound }
+    return { title, onFetchPokemon, name, foundPokemon, error, isPending }
   }
 });
 </script>
@@ -55,6 +45,6 @@ export default defineComponent({
   }
 
   .search-form {
-    max-width: 15rem;
+    max-width: 20rem;
   }
 </style>
