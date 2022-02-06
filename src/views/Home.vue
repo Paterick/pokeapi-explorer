@@ -7,7 +7,7 @@
       <button v-else>Searching...</button>
       <div class="error" v-if="error">{{error}}</div>
     </form>
-    
+
     <PokemonCard :pokemon ="foundPokemon" v-if="foundPokemon" />
   </div>
   
@@ -30,8 +30,9 @@ export default defineComponent({
     const { foundPokemon, error, isPending, searchPokemonApi } = usePokemonApi();
 
     const onFetchPokemon = async() => {
-      store.commit('addFavorite', name.value);
       await searchPokemonApi(name.value);
+      store.commit('addFavorite', foundPokemon.value);
+      console.log(foundPokemon.value);
     }
 
     return { title, onFetchPokemon, name, foundPokemon, error, isPending }
