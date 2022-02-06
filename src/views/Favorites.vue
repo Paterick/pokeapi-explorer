@@ -2,17 +2,30 @@
     <h2>Favorite Pokemon</h2>
     <div class="list-container">
         <div v-for="favoritePokemon in favorites" :key="favoritePokemon.id" class="list-row">
-            <div class="list-image">
+            <div class="list-image" @click="onShowDetail(favoritePokemon)">
                 <img :src="favoritePokemon.sprites.front_default" alt="">
             </div>
-            <div class="list-name">
-                <a href="">{{favoritePokemon.name}}</a>
+            <div class="list-name" @click="onShowDetail(favoritePokemon)">
+                <div @click="onShowDetail(favoritePokemon)">{{favoritePokemon.name}}</div>
             </div>
             <div class="list-button">
                 <button @click="onRemoveFavorite(favoritePokemon.id)">Remove</button>
             </div>
         </div>
     </div>
+    <Modal ref="pokemonDetailModal">
+        <template v-slot:header>
+            <div></div>
+        </template>        
+        <template v-slot:body>
+            <PokemonCard v-if="selectedPokemon" :pokemon="selectedPokemon" />
+        </template>
+        <template v-slot:footer>
+            <div>
+                <button @click="pokemonDetailModal.closeModal()">Close</button>
+            </div>
+        </template>        
+    </Modal>
     <div class="actions">
         <button @click="onAdd10RandomPokemonToFavorites">Add 10 Random Pokemon to Favorites</button>
     </div>
@@ -20,15 +33,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref } from 'vue'
 import { useStore } from 'vuex';
 import usePokemonApi from '@/composables/usePokemonApi';
 import { Pokemon  } from 'pokenode-ts';
+import PokemonCard from '@/components/PokemonCard.vue';
+import Modal from '@/components/Modal.vue';
 
 export default defineComponent({
+    name: 'Favorites',
+    components: { PokemonCard, Modal },    
     setup() {
         const store = useStore();
-        // const favorites = computed(() => store.state.favorites.sort((a: Pokemon, b: Pokemon) => a.name < b.name ) );
+        const selectedPokemon = ref<Pokemon | null>(null);
+        const pokemonDetailModal = ref();
+
         const favorites = computed(() => {
             return store.state.favorites.slice().sort(function(a:Pokemon, b:Pokemon ){
                 return (a.name > b.name) ? 1 : -1;
@@ -39,6 +58,11 @@ export default defineComponent({
 
         const onRemoveFavorite = (id: number) => {
             store.commit('removeFavorite', id);
+        }
+
+        const onShowDetail = (pokemon: Pokemon) => {
+            selectedPokemon.value = pokemon;
+            pokemonDetailModal.value.openModal();
         }
 
         const onAdd10RandomPokemonToFavorites = async() => {
@@ -58,7 +82,7 @@ export default defineComponent({
             isPending.value = false;
         }
 
-        return { favorites, onRemoveFavorite, onAdd10RandomPokemonToFavorites, isPending }
+        return { favorites, onRemoveFavorite, onAdd10RandomPokemonToFavorites, isPending, onShowDetail, pokemonDetailModal, selectedPokemon }
     },
 })
 </script>
