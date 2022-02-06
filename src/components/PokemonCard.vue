@@ -6,7 +6,7 @@
                 <img :src="pokemon.sprites.other.home.front_default" alt="">
             </div>
         <div class="card-stats">
-            Height: {{pokemon.height}} Weight: {{pokemon.weight}}
+            Height: {{pokemon.height}} decimetres  Weight: {{pokemon.weight}} hectograms
         </div>
         <div class="card-moves-container">
             <div class="card-move-title">Moves</div>

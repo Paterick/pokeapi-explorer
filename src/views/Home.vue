@@ -9,6 +9,10 @@
     </form>
 
     <PokemonCard :pokemon ="foundPokemon" v-if="foundPokemon" />
+    <div class="actions" v-if="foundPokemon">
+      <button @click="onAddToFavorites">Add to Favorites</button>
+      <div class="add-result" v-if="addResult">{{addResult}}</div>
+    </div>
   </div>
   
 </template>
@@ -27,25 +31,29 @@ export default defineComponent({
     
     const title = ref('Welcome to pokeapi explorer');
     const name = ref('');
+    const addResult = ref('');
     const { foundPokemon, error, isPending, searchPokemonApi } = usePokemonApi();
 
     const onFetchPokemon = async() => {
+      addResult.value = '';
       await searchPokemonApi(name.value);
-      store.commit('addFavorite', foundPokemon.value);
-      console.log(foundPokemon.value);
     }
 
-    return { title, onFetchPokemon, name, foundPokemon, error, isPending }
+    const onAddToFavorites = () => {
+      if( !foundPokemon.value) {
+        return;
+      }
+
+      store.commit('addFavorite', foundPokemon.value);
+      addResult.value = `Added ${foundPokemon.value.name} to favorites`
+    }
+
+    return { title, onFetchPokemon, name, foundPokemon, error, isPending, onAddToFavorites, addResult }
   }
 });
 </script>
 
 <style>
-  .error {
-    color: red;
-    font-size: 0.75rem;
-  }
-
   .pokemon-name {
     width: 20rem;
   }

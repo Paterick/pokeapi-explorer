@@ -13,7 +13,7 @@ const usePokemonApi = () => {
         const api = new PokemonClient();
     
         await api
-        .getPokemonByName(name.toLowerCase())
+        .getPokemonByName(name.toLowerCase().trim())
         .then((data: Pokemon) => {
           foundPokemon.value = data;
           isPending.value = false;
@@ -24,7 +24,25 @@ const usePokemonApi = () => {
         });
     }
 
-    return { error, isPending, foundPokemon, searchPokemonApi}
+    const getPokemonById = async(id: number) => {
+        error.value = null;
+        foundPokemon.value = null;
+        isPending.value = true;
+        const api = new PokemonClient();
+    
+        await api
+        .getPokemonById(id)
+        .then((data: Pokemon) => {
+          foundPokemon.value = data;
+          isPending.value = false;
+        })
+        .catch(() => {
+            error.value = `Could not find a pokemon with the id ${id}`;
+            isPending.value = false;
+        });
+    }    
+
+    return { error, isPending, foundPokemon, searchPokemonApi, getPokemonById}
 }
 
 export default usePokemonApi;

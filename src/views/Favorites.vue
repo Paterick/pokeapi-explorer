@@ -1,5 +1,5 @@
 <template>
-    <h2>Favorites</h2>
+    <h2>Favorite Pokemon</h2>
     <div class="list-container">
         <div v-for="favoritePokemon in favorites" :key="favoritePokemon.id" class="list-row">
             <div class="list-image">
@@ -13,23 +13,52 @@
             </div>
         </div>
     </div>
+    <div class="actions">
+        <button @click="onAdd10RandomPokemonToFavorites">Add 10 Random Pokemon to Favorites</button>
+    </div>
 
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex';
+import usePokemonApi from '@/composables/usePokemonApi';
+import { Pokemon  } from 'pokenode-ts';
 
 export default defineComponent({
     setup() {
         const store = useStore();
-        const favorites = computed(() => store.state.favorites);
+        // const favorites = computed(() => store.state.favorites.sort((a: Pokemon, b: Pokemon) => a.name < b.name ) );
+        const favorites = computed(() => {
+            return store.state.favorites.slice().sort(function(a:Pokemon, b:Pokemon ){
+                return (a.name > b.name) ? 1 : -1;
+            });            
+        });
+
+        const { foundPokemon, error, isPending, getPokemonById } = usePokemonApi();
 
         const onRemoveFavorite = (id: number) => {
             store.commit('removeFavorite', id);
         }
 
-        return { favorites, onRemoveFavorite }
+        const onAdd10RandomPokemonToFavorites = async() => {
+            isPending.value = true;
+            const initialCount = store.state.favorites.length;
+
+            while( store.state.favorites.length < (initialCount + 10) ) {
+                error.value = null;
+                foundPokemon.value = null;
+                const randomId = Math.floor(Math.random() * 900) + 1;
+                await getPokemonById(randomId);
+                if( !error.value && foundPokemon ) {
+                    store.commit('addFavorite', foundPokemon.value);
+                }
+            }
+
+            isPending.value = false;
+        }
+
+        return { favorites, onRemoveFavorite, onAdd10RandomPokemonToFavorites, isPending }
     },
 })
 </script>
@@ -46,6 +75,17 @@ export default defineComponent({
     .list-row {
         display: flex;
         align-items: center;
+        padding: 0.75rem;
+        border-radius: 0.625rem;
+        background: white;
+        margin: 1rem 0;
+        transition: all ease 0.2s;        
+    }
+
+    .list-row:hover {
+        box-shadow: 1px 2px 3px rgba(50, 50, 50, 0.05);
+        transform: scale(1.02);
+        transition: all ease 0.2s;
     }
 
     .list-image {
