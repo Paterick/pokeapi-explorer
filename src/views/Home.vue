@@ -7,25 +7,30 @@
       <button v-else>Searching...</button>
       <div class="error" v-if="error">{{error}}</div>
     </form>
-
+    
+    <PokemonCard :pokemon ="foundPokemon" v-if="foundPokemon" />
   </div>
-  <PokemonCard :pokemon ="foundPokemon" v-if="foundPokemon" />
+  
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import usePokemonApi from '@/composables/usePokemonApi.ts';
+import { useStore } from 'vuex';
+import usePokemonApi from '@/composables/usePokemonApi';
 import PokemonCard from '@/components/PokemonCard.vue';
 
 export default defineComponent({
   name: 'Home',
   components: { PokemonCard },
   setup() {
+    const store = useStore();
+    
     const title = ref('Welcome to pokeapi explorer');
     const name = ref('');
     const { foundPokemon, error, isPending, searchPokemonApi } = usePokemonApi();
 
     const onFetchPokemon = async() => {
+      store.commit('addFavorite', name.value);
       await searchPokemonApi(name.value);
     }
 
