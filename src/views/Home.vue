@@ -2,7 +2,7 @@
   <div class="home">
     <h2>{{title}}</h2>
     <form @submit.prevent="onFetchPokemon" class="search-form">
-      <input class="pokemon-name" type="text" placeholder="Enter the name of pokeman to search for" v-model="name" >
+      <input class="pokemon-name" type="text" placeholder="Enter the name of pokeman to search for" v-model="name" data-pokemon-name>
       <button v-if="!isPending">Search</button>
       <button v-else>Searching...</button>
       <div class="error" v-if="error">{{error}}</div>

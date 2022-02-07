@@ -88,21 +88,22 @@ export default defineComponent({
 </script>
 
 <style scoped >
+
     .list-container {
-        padding: 1.25rem;
-        align-items: center;
-        max-width: 32rem;
-        margin: 0 auto;
-        width: 25rem;
+        overflow-y: auto;
+        width: 95%;
+        display: flex;
+        flex-wrap: wrap;
     }
 
     .list-row {
+        width: 27%;
         display: flex;
         align-items: center;
-        padding: 0.75rem;
+        padding: 0.25rem;
         border-radius: 0.625rem;
         background: white;
-        margin: 1rem 0;
+        margin: 1em 1rem;
         transition: all ease 0.2s;        
     }
 
