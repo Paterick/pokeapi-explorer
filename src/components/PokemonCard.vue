@@ -22,16 +22,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { Pokemon  } from 'pokenode-ts';
 
 export default defineComponent({
     props: { pokemon: {required: true, type: Object as PropType<Pokemon>} },
-    setup() {
-        const placeholder = ref();
-
-        return { placeholder }
-    },
 })
 </script>
 
@@ -82,7 +77,6 @@ export default defineComponent({
         width: 95%;
         display: flex;
         flex-wrap: wrap;
-
     }
 
     .card-move-title {
